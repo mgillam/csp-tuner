@@ -15,18 +15,22 @@ class ClientRouter {
     this.dataAdapater = dataAdapter;
     this.eventEmitter = eventEmitter;
     this.router.get("/", async (req, res, next) => {
-      res.render("dashboardView", { mainComponent: "metrics", detailComponent: "reportTicker", 
+      res.render("dashboardView", { mainComponent: "metrics",
         metrics: dataAdapter.metrics, 
-        tickerItems: await (await dataAdapter.listViolationReports(dataAdapter.metrics.violationCount - 10, 10)).map((item) => JSON.stringify(item))
       });
     });
 
     this.router.get("/violations", async(req, res, next) => {
-      res.setHeader("Cache-Control", "nocache").render("dashboardView", { mainComponent: "violationTable", data: await dataAdapter.listViolationReports() });
+      res.setHeader("Cache-Control", "nocache").render("dashboardView", { mainComponent: "violationTable", 
+        data: await dataAdapter.listViolationReports(),
+      });
     });
 
     this.router.get("/odv", async(req, res, next) => {
-      res.setHeader("Cache-Control", "nocache").render("dashboardView", { mainComponent: "odvTable", data: await (await dataAdapter.getOriginDirectiveGroups()).map(odv => { return { uriCount: odv.violatingDocumentURIs.length, ...odv }}) });
+      res.setHeader("Cache-Control", "nocache").render("dashboardView", { mainComponent: "odvTable",  detailComponent: "reportTicker",
+        data: await (await dataAdapter.getOriginDirectiveGroups()).map(odv => { return { uriCount: odv.violatingDocumentURIs.length, ...odv }}), 
+        tickerItems: await (await dataAdapter.listViolationReports(dataAdapter.metrics.violationCount - 10, 10)).map((item) => JSON.stringify(item))
+      });
     });
 
     this.router.get("/events/metrics", (req, res, next) => {
