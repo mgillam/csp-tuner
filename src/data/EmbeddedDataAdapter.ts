@@ -4,7 +4,7 @@ import path from "path";
 import IDataAdapter from "../types/data/IDataAdapter";
 import { Metrics } from "../types/data/Metrics";
 import { OriginDirectiveViolationGroup } from "../types/OriginDirectiveViolationGroup";
-import { CSPViolationJson } from "../types/report";
+import { CSPViolationJson, CSPViolationRecord } from "../types/report";
 
 class EmbeddedDataAdapter implements IDataAdapter {
   db: Level<string, any>;
@@ -17,7 +17,7 @@ class EmbeddedDataAdapter implements IDataAdapter {
     const dbPath = path.join(process.cwd(), filePath || "", "db");
     this.db = new Level<string, any>(dbPath, { valueEncoding: "json" });
   }
-  async listViolationReports(offset?: number | undefined, limit?: number | undefined, filter?: Partial<CSPViolationJson> | undefined): Promise<CSPViolationJson[]> {
+  async listViolationReports(offset?: number | undefined, limit?: number | undefined, filter?: Partial<CSPViolationJson> | undefined): Promise<CSPViolationRecord[]> {
     throw new Error("Not implemented");
   }
 

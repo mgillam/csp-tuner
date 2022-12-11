@@ -13,7 +13,7 @@ class ClientRouter {
     });
 
     this.router.get("/violations", async(req, res, next) => {
-      res.render("dashboardView", { mainComponent: "violationTable" });
+      res.setHeader("Cache-Controls", "nocache").render("dashboardView", { mainComponent: "violationTable", data: await dataAdapter.listViolationReports() });
     });
     
     this.router.get("/metrics/:metric", async (req, res) => {

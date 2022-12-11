@@ -1,10 +1,10 @@
 import IDataAdapter from "../types/data/IDataAdapter";
 import { Metrics } from "../types/data/Metrics";
 import { OriginDirectiveViolationGroup } from "../types/OriginDirectiveViolationGroup";
-import { CSPViolationJson } from "../types/report";
+import { CSPViolationJson, CSPViolationRecord } from "../types/report";
 
 class InMemoryDataAdapter implements IDataAdapter {
-  private violationReports: CSPViolationJson[] = [];
+  private violationReports: CSPViolationRecord[] = [];
   private originDirectiveViolationGroups: OriginDirectiveViolationGroup[] = [];
   metrics: Metrics = { odvCount: 0, violationCount: 0 };
 
@@ -14,7 +14,7 @@ class InMemoryDataAdapter implements IDataAdapter {
   }
 
   async writeViolationReport(violation: CSPViolationJson): Promise<void> {
-    this.violationReports.push(violation);
+    this.violationReports.push({ reportTime: new Date().getTime(), ...violation});
     const blockedUriDomain = /(?<=https?:\/\/)[^/]+/gmi.exec(violation["blocked-uri"]);
     const origin = blockedUriDomain ? blockedUriDomain[0] : "";
     const directive = violation["violated-directive"].split(" ")[0];
@@ -36,7 +36,7 @@ class InMemoryDataAdapter implements IDataAdapter {
     return;
   }
 
-  async listViolationReports(offset = 0, limit = this.violationReports.length, filter: Partial<CSPViolationJson> = {}): Promise<CSPViolationJson[]> {
+  async listViolationReports(offset = 0, limit = this.violationReports.length, filter: Partial<CSPViolationJson> = {}): Promise<CSPViolationRecord[]> {
     return new Promise((resolve, reject) => {
       try {
         resolve(this.violationReports);

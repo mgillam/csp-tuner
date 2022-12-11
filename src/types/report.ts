@@ -10,3 +10,9 @@ export type CSPViolationJson = {
 export type CSPViolationReportJson = {
   "csp-report": CSPViolationJson
 }
+
+export type Timestamped = {
+  reportTime: number
+}
+
+export type CSPViolationRecord = CSPViolationJson & Timestamped;
