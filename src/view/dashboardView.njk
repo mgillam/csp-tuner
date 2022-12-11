@@ -2,8 +2,13 @@
 
 {% block content %}
   <section class="h-screen">
-    <div id="container" class="px-6 h-full text-gray-800">
+    <div id="container" class="px-6 h-full text-gray-800 flex flex-row">
+      <div id="mainComponent" class="w-6/12">
       {% include mainComponent|component %}
+      </div>
+      <div id="detailPane" class="w-3/12">
+        {% include detailComponent|component %}
+      </div>
     </div>
   </section>
 {% endblock %}

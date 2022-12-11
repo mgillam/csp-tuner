@@ -1,0 +1,9 @@
+      {% for violation in data %}
+        <tr>
+          <td class="border border-slate-700">{{ reportTime|timestamp }}</td>
+          <td class="border border-slate-700">{{ violation["document-uri"] }}</td>
+          <td class="border border-slate-700">{{ violation["blocked-uri"]}}</td>
+          <td class="border border-slate-700">{{ violation["violated-directive"]}}</td>
+          <td class="border border-slate-700">Details</td>
+        </tr>
+      {% endfor %}

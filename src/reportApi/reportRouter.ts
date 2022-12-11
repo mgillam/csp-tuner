@@ -14,8 +14,6 @@ export default class ReportRouter {
     this.router.post("/", async (req, res) => {
       const violationReport: CSPViolationReportJson = req.body;
       dataAdapter.writeViolationReport(violationReport["csp-report"]);
-      console.log("Violation count ", await (await dataAdapter.listViolationReports()).length);
-      console.log("ViolationGroups ", JSON.stringify(await dataAdapter.getOriginDirectiveGroups()));
       res.status(204).send();
     });
   }

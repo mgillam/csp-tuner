@@ -5,6 +5,7 @@ import IDataAdapter from "../types/data/IDataAdapter";
 import { Metrics } from "../types/data/Metrics";
 import { OriginDirectiveViolationGroup } from "../types/OriginDirectiveViolationGroup";
 import { CSPViolationJson, CSPViolationRecord } from "../types/report";
+import EventEmitter from "events";
 
 class EmbeddedDataAdapter implements IDataAdapter {
   db: Level<string, any>;
@@ -12,10 +13,12 @@ class EmbeddedDataAdapter implements IDataAdapter {
     odvCount: 0,
     violationCount: 0
   }
+  eventEmitter: EventEmitter;
 
-  constructor(filePath?: string) {
+  constructor(eventEmitter: EventEmitter, filePath?: string) {
     const dbPath = path.join(process.cwd(), filePath || "", "db");
     this.db = new Level<string, any>(dbPath, { valueEncoding: "json" });
+    this.eventEmitter = eventEmitter;
   }
   async listViolationReports(offset?: number | undefined, limit?: number | undefined, filter?: Partial<CSPViolationJson> | undefined): Promise<CSPViolationRecord[]> {
     throw new Error("Not implemented");

@@ -4,15 +4,14 @@
       <th><form id="autorefreshForm"><label for="autorefresh" class="text-sm font-light text-gray-400">Autorefresh</label><input type="checkbox" name="autorefresh" disabled /></form></th>
     </tr>
     <tr>
-      <th><!--timestamp--></th>
-      <th>document-uri</th>
-      <th>blocked-uri</th>
-      <th>violated-directive</th>
+      <th>Source</th>
+      <th>Directive</th>
+      <th>Unique violating URIs</th>
       <th><!--details--></th>
     </tr>
   </thead>
   <tbody id="tableBody">
-    {% include "./violationTableBody.njk" %}
+    {% include "./odvTableBody.njk" %}
   </tbody>
   <tfoot>
     <tr><td colspan="5"></td></tr>

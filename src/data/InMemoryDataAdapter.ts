@@ -2,18 +2,34 @@ import IDataAdapter from "../types/data/IDataAdapter";
 import { Metrics } from "../types/data/Metrics";
 import { OriginDirectiveViolationGroup } from "../types/OriginDirectiveViolationGroup";
 import { CSPViolationJson, CSPViolationRecord } from "../types/report";
+import EventEmitter from "events";
+import MetricChangeEvent from "../types/events/MetricChange";
 
 class InMemoryDataAdapter implements IDataAdapter {
   private violationReports: CSPViolationRecord[] = [];
   private originDirectiveViolationGroups: OriginDirectiveViolationGroup[] = [];
   metrics: Metrics = { odvCount: 0, violationCount: 0 };
+  eventEmitter: EventEmitter;
+
+  constructor(eventEmitter: EventEmitter) {
+    this.eventEmitter = eventEmitter;
+  }
 
   private updateMetrics() {
-    this.metrics.odvCount = this.originDirectiveViolationGroups.length;
-    this.metrics.violationCount = this.violationReports.length;
+    const newOdvCount = this.originDirectiveViolationGroups.length;
+    const newViolationCount = this.violationReports.length;
+    if(this.metrics.odvCount !== newOdvCount) {
+      this.metrics.odvCount = this.originDirectiveViolationGroups.length;
+      this.eventEmitter.emit("metricChange", { metric: "odvCount", value: newOdvCount } as MetricChangeEvent);
+    }
+    if(this.metrics.violationCount !== newViolationCount) {
+      this.metrics.violationCount = this.violationReports.length;
+      this.eventEmitter.emit("metricChange", { metric: "violationCount", value: newViolationCount } as MetricChangeEvent);
+    }
   }
 
   async writeViolationReport(violation: CSPViolationJson): Promise<void> {
+    this.eventEmitter.emit("cspReport", violation);
     this.violationReports.push({ reportTime: new Date().getTime(), ...violation});
     const blockedUriDomain = /(?<=https?:\/\/)[^/]+/gmi.exec(violation["blocked-uri"]);
     const origin = blockedUriDomain ? blockedUriDomain[0] : "";
