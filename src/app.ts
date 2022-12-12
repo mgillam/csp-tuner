@@ -8,8 +8,6 @@ import InMemoryDataAdapter from "./data/InMemoryDataAdapter";
 import { registerFilters } from "./view/filters";
 import EventEmitter from "events";
 
-
-
 const app = express();
 const appEventEmitter = new EventEmitter();
 const dataAdapter: IDataAdapter = new InMemoryDataAdapter(appEventEmitter);
