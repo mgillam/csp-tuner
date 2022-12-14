@@ -15,6 +15,14 @@
     {% include "./violationTableBody.njk" %}
   </tbody>
   <tfoot>
-    <tr><td colspan="5"></td></tr>
+    <tr><td colspan="5">
+      {% for page in pagination.prevPages %}
+        <a href="/client/violations/{{page}}" class="text-teal-600 hover:text-teal-800 transition duration-300 ease-in-out">{{page}}</a>
+      {% endfor %}
+      <span class="bg-teal-200">{{ pagination.currPage }}</span>
+      {% for page in pagination.nextPages %}
+        <a href="/client/violations/{{page}}" class="text-teal-600 hover:text-teal-800 transition duration-300 ease-in-out">{{page}}</a>
+      {% endfor %}
+    </td></tr>
   </tfood>
 </table>

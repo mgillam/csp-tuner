@@ -52,10 +52,10 @@ class InMemoryDataAdapter implements IDataAdapter {
     return;
   }
 
-  async listViolationReports(offset = 0, limit = this.violationReports.length, filter: Partial<CSPViolationJson> = {}): Promise<CSPViolationRecord[]> {
+  async listViolationReports(offset = 0, limit = 20, filter: Partial<CSPViolationJson> = {}): Promise<CSPViolationRecord[]> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(this.violationReports);
+        resolve(this.violationReports.slice(offset, offset + limit) || []);
       } catch(err) {
         reject(err);
       }

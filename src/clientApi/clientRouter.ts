@@ -6,28 +6,46 @@ import EventEmitter from "events";
 import MetricChangeEvent from "../types/events/MetricChange";
 import { CSPViolationJson } from "../types/report";
 
+function generatePages(start = 0, end: number): number[] {
+  const array = [];
+  for(let page = start; page <= end; page++) {
+    array.push(page);
+  }
+  return array;
+}
 class ClientRouter {
   router = express.Router();
   dataAdapater: IDataAdapter;
   eventEmitter: EventEmitter;
 
+
+
   constructor(dataAdapter: IDataAdapter, eventEmitter: EventEmitter) {
     this.dataAdapater = dataAdapter;
     this.eventEmitter = eventEmitter;
     this.router.get("/", async (req, res, next) => {
-      res.render("dashboardView", { mainComponent: "metrics",
-        metrics: dataAdapter.metrics, 
+      res.render("dashboardView", { mainComponent: "metrics", detailComponent: "reportTicker",
+        metrics: dataAdapter.metrics,
+        tickerItems: await (await dataAdapter.listViolationReports(dataAdapter.metrics.violationCount - 10, 10)).map((item) => JSON.stringify(item))
       });
     });
 
-    this.router.get("/violations", async(req, res, next) => {
-      res.setHeader("Cache-Control", "nocache").render("dashboardView", { mainComponent: "violationTable", 
-        data: await dataAdapter.listViolationReports(),
+    this.router.get("/violations/:page?", async(req, res, next) => {
+      const page = (req.params.page as number|undefined || 1);
+      const pageOffset = (page - 1) * 20;
+      const pageCount = Math.ceil(dataAdapter.metrics.violationCount / 20);
+      res.setHeader("Cache-Control", "no-cache").render("dashboardView", { mainComponent: "violationTable", 
+        data: await dataAdapter.listViolationReports(pageOffset),
+        pagination: { 
+          currPage: page,
+          nextPages: page < pageCount ? generatePages(parseInt(page.toString()) + 1, pageCount) : [],
+          prevPages: page > 1 ? generatePages(1, pageCount - 1) : []
+        }
       });
     });
 
     this.router.get("/odv", async(req, res, next) => {
-      res.setHeader("Cache-Control", "nocache").render("dashboardView", { mainComponent: "odvTable",  detailComponent: "reportTicker",
+      res.setHeader("Cache-Control", "no-cache").render("dashboardView", { mainComponent: "odvTable",  detailComponent: "reportTicker",
         data: await (await dataAdapter.getOriginDirectiveGroups()).map(odv => { return { uriCount: odv.violatingDocumentURIs.length, ...odv }}), 
         tickerItems: await (await dataAdapter.listViolationReports(dataAdapter.metrics.violationCount - 10, 10)).map((item) => JSON.stringify(item))
       });
@@ -76,7 +94,7 @@ class ClientRouter {
     
     this.router.get("/metrics/:metric", async (req, res) => {
       if(Object.keys(dataAdapter.metrics).includes(req.params.metric)) {
-        res.setHeader("Cache-Control", "nocache").status(200).send(dataAdapter.metrics[req.params.metric as keyof Metrics].toString());
+        res.setHeader("Cache-Control", "no-cache").status(200).send(dataAdapter.metrics[req.params.metric as keyof Metrics].toString());
       } else {
         res.status(404).send("Metric not found");
       }
