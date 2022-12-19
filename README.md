@@ -24,4 +24,4 @@ Trades the requirement for node, for a requirement for docker
  Strictly speaking a minimal modification to the `src/app.ts` would make it possible, if you provided a trusted cert (e.g. via mkcert or something). Otherwise, you can shove a reverse proxy in front of it like nginx.
  
  ## License
- 
+ This project is licensed under the MIT license, you can find a copy in the repo.
