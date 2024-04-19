@@ -4,7 +4,7 @@
  - A web interface for capturing and reviewing CSP violations
  - Currently quite rough
  - hardcoded to serve on port 3006 (you can change that by modifying `src/app.ts`
- - written for a blog post (link to be added later)
+ - written for a blog post: https://www.secureideas.com/blog/twelve-days-of-zapmas-day-12-testing-a-new-content-security-policy
  
 ## How do you run it?
 
